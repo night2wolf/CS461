@@ -1,0 +1,48 @@
+# Assignment:
+"""
+Black or White is a one-player puzzle game played on a 5x5 grid with 25 identical pieces.
+Each piece is a disk, white on one face, black on the other—thus the name. 
+One piece is placed in each grid square. 
+Initially pieces are placed randomly as to whether the white or black side is up. 
+The player may pick any piece to flip, thus reversing its color.
+BUT—when any piece is flipped, then every piece in the same row and same column,
+regardless of current color, must also be flipped.
+The object is to make a series of flips such that the pieces are either all-white or all-black.
+Your task is to write a program that can generate a random Black or White puzzle,
+and then find a solution, or demonstrate that no solution exists from that starting configuration.
+If a solution exists, 
+give the user the option of seeing just a list of the moves that must be made, 
+or a more comprehensive version showing the state of the board after each flip. 
+Allow output to a text file, since the number of flips necessary may be large. 
+
+Programming notes:
+
+You may use C, C++, C#, Java, or Python. 
+(If you have something else you really want to use, contact me and we’ll discuss it.)
+Note that there are 25 pieces, and each may be in 2 states independently.
+Thus there are 225 = 33,554,432 possible states, of which 2 are goal states.
+Data representation will be important and a compact representation may make the difference
+between a program that works and one that runs out of memory. 
+You may want to consider a bitstring representation for storage,
+since each possible board configuration maps directly to a 25-bit integer.
+
+Note that any position has a dual, consisting of the same position with all pieces reversed. 
+If a series of steps from this position would lead to an all-black state, 
+then a corresponding series from the dual would lead to an all-white state. 
+This makes the code more complex but cuts data storage in half. 
+But be careful that you keep track of which goal state you're headed towards.... 
+
+Algorithm choices: Since moves are reversible, 
+any forward search will have to track which positions have already been examined, 
+to avoid cycles. There will not be a monotonic metric allowing you to assess progress; 
+it may be necessary to temporarily increase the number of disks of the "wrong" color to reach a solution.
+You will probably want to use retrograde analysis: If this is a winning position (monochrome), what must the position have been just before this? Each of those 25 positions can be stored and marked as 1 step from the goal, with what the winning move is. Now, what position would have led to each of those positions? Those positions should be marked as winning in 2 moves, and for each, what the correct move is. (The branching factor is 25, so the number of positions expands quickly, and remember to omit any position that’s already in the database.) This continues until all possible positions have been marked and stored in the database. 
+
+Interacting with the user then consists of presenting a random board,
+getting input as to which disk the player wants to turn, and showing the updated board.
+The player should always have an option for the program to show the steps necessary to reach
+a solution from the then-current position, if it is possible to do so.
+
+You may want to write 2 programs: One that generates the database of moves,
+and the game-playing program that uses the database to interact with the player. 
+"""
