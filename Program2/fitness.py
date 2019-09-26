@@ -24,7 +24,7 @@ def create_schedule():
     random_schedule = []
     for i in range(len(data.classes)):
         location = random.choice(data.locations)
-        class_schedule = data.Schedule(data.classes[i],data.class_size[i],random.choice(data.times),random.choice(data.instructors),location,determine_location_size(location))
+        class_schedule = data.Schedule(data.classes[i],data.class_size[i],random.choice(data.times),random.choice(data.instructors),location,determine_location_size(location), [])
         random_schedule.append(class_schedule)
 
     return random_schedule
@@ -60,13 +60,11 @@ def fitness_evaluate(schedule):
                 counter = counter + 1                
         # If the counter is only 1 that means it is by itself and we give a reward
         if counter == 1:
-            score = score + 5     
-                 
+            score = score + 5
         # For each course that is in a room large enough to accommodate it: +5
         if schedule[i].location_size >= schedule[i].class_size:
             score = score + 5
-        
-        # Room capacity is no more than twice the expected enrollment: +2
+       # Room capacity is no more than twice the expected enrollment: +2
         enrollment = schedule[i].class_size * 2
         if enrollment >= schedule[i].location_size:
             score = score +2
@@ -94,14 +92,19 @@ def fitness_evaluate(schedule):
     # For each schedule that has the same instructor teaching more than 4 courses: -5 per course over 4
     if Hare_counter > 4:
         score = score - (5*(Hare_counter-4))
+        schedule[11].violations.append("Hare teaching too many courses")
     if Bingham_counter > 4:
         score = score - (5*(Bingham_counter-4))
+        schedule[11].violations.append("Bingham teaching too many courses")
     if Kuhail_counter > 4:
         score = score - (5*(Kuhail_counter-4))
+        schedule[11].violations.append("Kuhail teaching too many courses")
     if Mitchell_counter > 4:
         score = score - (5*(Mitchell_counter-4))
+        schedule[11].violations.append("Mitchell teaching too many courses")
     if Rao_counter > 4:
         score = score - (5*(Rao_counter-4))
+        schedule[11].violations.append("Rao teaching too many courses")
     
     # For each schedule that has Rao or Mitchell(graduate faculty) teaching more courses than Hare or Bingham: -5 % to total fitness score. (Same number of courses is OK.)
     Mitchell_Rao_courses = Mitchell_counter + Rao_counter
@@ -205,18 +208,241 @@ def fitness_evaluate(schedule):
         score = score * .97
     if schedule[7].location == 'Bloch0009' and schedule[3].location != 'Bloch0009':
         score = score * .97
-    # Times array '10A', '11A', '12P', '1P', '2P', '3P', '4P'
+    # Courses are scheduled for adjacent times: +5% to score
+    # if these courses are scheduled for adjacent times, and are in the same building: +5 points
+    # CS 101A [0] CS 101B [1], CS191A [4], CS191B[5],CS201A[2],CS201B[3],CS291B[6],CS291A[7]
+    # Check if scheduled adjacent for 101A and 191A
     for i in range(len(data.times)):
         if i-1 == -1:
             if schedule[0].time == data.times[i] and schedule[4].time == data.times[i+1]:
                 score = score * 1.05
+                if schedule[0].location == schedule[4].location:
+                    score = score +5
+                if schedule[0].location[0:3] == 'Haag' and schedule[4].location[0:3] == 'Haag':
+                    score = score +5
+                if schedule[0].location[0:8] == 'Flarsheim' and schedule[4].location[0:8] == 'Flarsheim':
+                    score = score + 5
         if i+1 == 7:
             if schedule[0].time == data.times[i] and schedule[4].time == data.times[i-1]:
                 score = score * 1.05
+                if schedule[0].location == schedule[4].location:
+                    score = score +5
+                if schedule[0].location[0:3] == 'Haag' and schedule[4].location[0:3] == 'Haag':
+                    score = score + 5
+                if schedule[0].location[0:8] == 'Flarsheim' and schedule[4].location[0:8] == 'Flarsheim':
+                    score = score + 5
         else:
             if schedule[0].time == data.times[i] and (schedule[4].time == data.times[i-1] or schedule[4].time == data.times[i+1]):
                 score = score * 1.05
-
+                if schedule[0].location == schedule[4].location:
+                    score = score +5
+                if schedule[0].location[0:3] == 'Haag' and schedule[4].location[0:3] == 'Haag':
+                    score = score + 5
+                if schedule[0].location[0:8] == 'Flarsheim' and schedule[4].location[0:8] == 'Flarsheim':
+                    score = score + 5
+    # Check if scheduled adjacent for 101A and 191B
+    for i in range(len(data.times)):
+        if i-1 == -1:
+            if schedule[0].time == data.times[i] and schedule[5].time == data.times[i+1]:
+                score = score * 1.05
+                if schedule[0].location == schedule[5].location:
+                    score = score +5
+                if schedule[0].location[0:3] == 'Haag' and schedule[5].location[0:3] == 'Haag':
+                    score = score +5
+                if schedule[0].location[0:8] == 'Flarsheim' and schedule[5].location[0:8] == 'Flarsheim':
+                    score = score + 5
+        if i+1 == 7:
+            if schedule[0].time == data.times[i] and schedule[5].time == data.times[i-1]:
+                score = score * 1.05
+                if schedule[0].location == schedule[5].location:
+                    score = score +5
+                if schedule[0].location[0:3] == 'Haag' and schedule[5].location[0:3] == 'Haag':
+                    score = score + 5
+                if schedule[0].location[0:8] == 'Flarsheim' and schedule[5].location[0:8] == 'Flarsheim':
+                    score = score + 5
+        else:
+            if schedule[0].time == data.times[i] and (schedule[5].time == data.times[i-1] or schedule[5].time == data.times[i+1]):
+                score = score * 1.05
+                if schedule[0].location == schedule[5].location:
+                    score = score +5
+                if schedule[0].location[0:3] == 'Haag' and schedule[5].location[0:3] == 'Haag':
+                    score = score + 5
+                if schedule[0].location[0:8] == 'Flarsheim' and schedule[5].location[0:8] == 'Flarsheim':
+                    score = score + 5
+    # Check if scheduled adjacent for 101B and 191A                    
+    for i in range(len(data.times)):
+        if i-1 == -1:
+            if schedule[1].time == data.times[i] and schedule[4].time == data.times[i+1]:
+                score = score * 1.05
+                if schedule[1].location == schedule[4].location:
+                    score = score +5
+                if schedule[1].location[0:3] == 'Haag' and schedule[4].location[0:3] == 'Haag':
+                    score = score +5
+                if schedule[1].location[0:8] == 'Flarsheim' and schedule[4].location[0:8] == 'Flarsheim':
+                    score = score + 5
+        if i+1 == 7:
+            if schedule[1].time == data.times[i] and schedule[4].time == data.times[i-1]:
+                score = score * 1.05
+                if schedule[1].location == schedule[4].location:
+                    score = score +5
+                if schedule[1].location[0:3] == 'Haag' and schedule[4].location[0:3] == 'Haag':
+                    score = score + 5
+                if schedule[1].location[0:8] == 'Flarsheim' and schedule[4].location[0:8] == 'Flarsheim':
+                    score = score + 5
+        else:
+            if schedule[1].time == data.times[i] and (schedule[4].time == data.times[i-1] or schedule[4].time == data.times[i+1]):
+                score = score * 1.05
+                if schedule[1].location == schedule[4].location:
+                    score = score +5
+                if schedule[1].location[0:3] == 'Haag' and schedule[4].location[0:3] == 'Haag':
+                    score = score + 5
+                if schedule[1].location[0:8] == 'Flarsheim' and schedule[4].location[0:8] == 'Flarsheim':
+                    score = score + 5
+    # Check if scheduled adjacent for 101B and 191B
+    for i in range(len(data.times)):
+        if i-1 == -1:
+            if schedule[1].time == data.times[i] and schedule[5].time == data.times[i+1]:
+                score = score * 1.05
+                if schedule[1].location == schedule[5].location:
+                    score = score +5
+                if schedule[1].location[0:3] == 'Haag' and schedule[5].location[0:3] == 'Haag':
+                    score = score +5
+                if schedule[1].location[0:8] == 'Flarsheim' and schedule[5].location[0:8] == 'Flarsheim':
+                    score = score + 5
+        if i+1 == 7:
+            if schedule[1].time == data.times[i] and schedule[5].time == data.times[i-1]:
+                score = score * 1.05
+                if schedule[1].location == schedule[5].location:
+                    score = score +5
+                if schedule[1].location[0:3] == 'Haag' and schedule[5].location[0:3] == 'Haag':
+                    score = score + 5
+                if schedule[1].location[0:8] == 'Flarsheim' and schedule[5].location[0:8] == 'Flarsheim':
+                    score = score + 5
+        else:
+            if schedule[1].time == data.times[i] and (schedule[5].time == data.times[i-1] or schedule[5].time == data.times[i+1]):
+                score = score * 1.05
+                if schedule[1].location == schedule[5].location:
+                    score = score +5
+                if schedule[1].location[0:3] == 'Haag' and schedule[5].location[0:3] == 'Haag':
+                    score = score + 5
+                if schedule[1].location[0:8] == 'Flarsheim' and schedule[5].location[0:8] == 'Flarsheim':
+                    score = score + 5
+    # Check if scheduled adjacent for 201A and 291A
+    for i in range(len(data.times)):
+        if i-1 == -1:
+            if schedule[2].time == data.times[i] and schedule[6].time == data.times[i+1]:
+                score = score * 1.05
+                if schedule[2].location == schedule[6].location:
+                    score = score +5
+                if schedule[2].location[0:3] == 'Haag' and schedule[6].location[0:3] == 'Haag':
+                    score = score +5
+                if schedule[2].location[0:8] == 'Flarsheim' and schedule[6].location[0:8] == 'Flarsheim':
+                    score = score + 5
+        if i+1 == 7:
+            if schedule[2].time == data.times[i] and schedule[6].time == data.times[i-1]:
+                score = score * 1.05
+                if schedule[2].location == schedule[6].location:
+                    score = score +5
+                if schedule[2].location[0:3] == 'Haag' and schedule[6].location[0:3] == 'Haag':
+                    score = score + 5
+                if schedule[2].location[0:8] == 'Flarsheim' and schedule[6].location[0:8] == 'Flarsheim':
+                    score = score + 5
+        else:
+            if schedule[2].time == data.times[i] and (schedule[6].time == data.times[i-1] or schedule[6].time == data.times[i+1]):
+                score = score * 1.05
+                if schedule[2].location == schedule[6].location:
+                    score = score +5
+                if schedule[2].location[0:3] == 'Haag' and schedule[6].location[0:3] == 'Haag':
+                    score = score + 5
+                if schedule[2].location[0:8] == 'Flarsheim' and schedule[6].location[0:8] == 'Flarsheim':
+                    score = score + 5
+    # Check if scheduled adjacent for 201A and 291B
+    for i in range(len(data.times)):
+        if i-1 == -1:
+            if schedule[2].time == data.times[i] and schedule[7].time == data.times[i+1]:
+                score = score * 1.05
+                if schedule[2].location == schedule[7].location:
+                    score = score +5
+                if schedule[2].location[0:3] == 'Haag' and schedule[7].location[0:3] == 'Haag':
+                    score = score +5
+                if schedule[2].location[0:8] == 'Flarsheim' and schedule[7].location[0:8] == 'Flarsheim':
+                    score = score + 5
+        if i+1 == 7:
+            if schedule[2].time == data.times[i] and schedule[7].time == data.times[i-1]:
+                score = score * 1.05
+                if schedule[2].location == schedule[7].location:
+                    score = score +5
+                if schedule[2].location[0:3] == 'Haag' and schedule[7].location[0:3] == 'Haag':
+                    score = score + 5
+                if schedule[2].location[0:8] == 'Flarsheim' and schedule[7].location[0:8] == 'Flarsheim':
+                    score = score + 5
+        else:
+            if schedule[2].time == data.times[i] and (schedule[7].time == data.times[i-1] or schedule[7].time == data.times[i+1]):
+                score = score * 1.05
+                if schedule[2].location == schedule[7].location:
+                    score = score +5
+                if schedule[2].location[0:3] == 'Haag' and schedule[7].location[0:3] == 'Haag':
+                    score = score + 5
+                if schedule[2].location[0:8] == 'Flarsheim' and schedule[7].location[0:8] == 'Flarsheim':
+                    score = score + 5
+    # Check if scheduled adjacent for 201B and 291A                
+    for i in range(len(data.times)):
+        if i-1 == -1:
+            if schedule[3].time == data.times[i] and schedule[6].time == data.times[i+1]:
+                score = score * 1.05
+                if schedule[3].location == schedule[6].location:
+                    score = score +5
+                if schedule[3].location[0:3] == 'Haag' and schedule[6].location[0:3] == 'Haag':
+                    score = score +5
+                if schedule[3].location[0:8] == 'Flarsheim' and schedule[6].location[0:8] == 'Flarsheim':
+                    score = score + 5
+        if i+1 == 7:
+            if schedule[3].time == data.times[i] and schedule[6].time == data.times[i-1]:
+                score = score * 1.05
+                if schedule[3].location == schedule[6].location:
+                    score = score +5
+                if schedule[3].location[0:3] == 'Haag' and schedule[6].location[0:3] == 'Haag':
+                    score = score + 5
+                if schedule[3].location[0:8] == 'Flarsheim' and schedule[6].location[0:8] == 'Flarsheim':
+                    score = score + 5
+        else:
+            if schedule[3].time == data.times[i] and (schedule[6].time == data.times[i-1] or schedule[6].time == data.times[i+1]):
+                score = score * 1.05
+                if schedule[3].location == schedule[6].location:
+                    score = score +5
+                if schedule[3].location[0:3] == 'Haag' and schedule[6].location[0:3] == 'Haag':
+                    score = score + 5
+                if schedule[3].location[0:8] == 'Flarsheim' and schedule[6].location[0:8] == 'Flarsheim':
+                    score = score + 5
+    # Check if scheduled adjacent for 201B and 291B
+    for i in range(len(data.times)):
+        if i-1 == -1:
+            if schedule[3].time == data.times[i] and schedule[7].time == data.times[i+1]:
+                score = score * 1.05
+                if schedule[3].location == schedule[7].location:
+                    score = score + 5
+                if schedule[3].location[0:3] == 'Haag' and schedule[7].location[0:3] == 'Haag':
+                    score = score + 5
+                if schedule[3].location[0:8] == 'Flarsheim' and schedule[7].location[0:8] == 'Flarsheim':
+                    score = score + 5
+        if i+1 == 7:
+            if schedule[3].time == data.times[i] and schedule[7].time == data.times[i-1]:
+                score = score * 1.05
+                if schedule[3].location == schedule[7].location:
+                    score = score + 5
+                if schedule[3].location[0:3] == 'Haag' and schedule[7].location[0:3] == 'Haag':
+                    score = score + 5
+                if schedule[3].location[0:8] == 'Flarsheim' and schedule[7].location[0:8] == 'Flarsheim':
+                    score = score + 5
+        else:
+            if schedule[3].time == data.times[i] and (schedule[7].time == data.times[i-1] or schedule[7].time == data.times[i+1]):
+                score = score * 1.05
+                if schedule[3].location == schedule[7].location:
+                    score = score + 5
+                if schedule[3].location[0:3] == 'Haag' and schedule[7].location[0:3] == 'Haag':
+                    score = score + 5
+                if schedule[3].location[0:8] == 'Flarsheim' and schedule[7].location[0:8] == 'Flarsheim':
+                    score = score + 5
 
     return score
 

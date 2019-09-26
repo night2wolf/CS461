@@ -79,7 +79,12 @@ no more than 0.05--of being replaced with a randomly-selected element from that 
 Report the average fitness and best fitness of each generation, 
 until the best fitness in the population increases by less than 0.2% for 3 consecutive generations.
 Report the best schedule you find. Your program should report any constraints that are violated
-(multiple courses in the same room, too many courses by 1 instructor, etc.)
+
+More than 1 class in the same room at the same time
+Instructor not qualified to teach the course
+Room too small for expected number of students
+1 instructor has more than 4 courses
+
 The room preferences for CS 101/191 and CS 201/291 are just that—preferences--
 so it’s OK if they’re violated. (Better if they’re not, but the fitness function will take care of that.)
 
