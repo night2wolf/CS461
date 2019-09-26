@@ -23,7 +23,7 @@ def l2normalize(scores, generation):
     for i in range(len(l2normal)):
         l2verify = l2verify + l2normal[i]
         l2distrib.append(l2verify)
-    return topchild, average, l2distrib
+    return topchild,topscore, average, l2distrib
 
 
 def create_child(l2distrib, generation):

@@ -114,13 +114,110 @@ def fitness_evaluate(schedule):
     Courses are scheduled for same time: -10% to score
     Courses are scheduled for adjacent times: +5% to score
     if these courses are scheduled for adjacent times, and are in the same building: +5 points
-
     Are both on the quad (Haag, Royall, Flarsheim):
     no modification
     1 is in Katz and the other isn’t: -3%
     1 is in Bloch and the other isn’t: -3%
     (Yes, if one’s in Katz and the other’s in Bloch, that’s -6%)
     """
+    # since we know specifically the index of these classes we can use it to our advantage:
+    # CS 101A [0] CS 101B [1], CS191A [4], CS191B[5],CS201A[2],CS101B[3],CS291B[6],CS291A[7]
+    # Check if scheduled at same time
+    if schedule[0].time == schedule[4].time:
+        score = score * .90
+    if schedule[0].time == schedule[5].time:
+        score = score * .90
+    if schedule[1].time == schedule[4].time:
+        score = score * .90
+    if schedule[1].time == schedule[5].time:
+        score = score * .90    
+    if schedule[2].time == schedule[6].time:
+        score = score * .90
+    if schedule[2].time == schedule[7].time:
+        score = score * .90
+    if schedule[3].time == schedule[6].time:
+        score = score * .90
+    if schedule[3].time == schedule[7].time:
+        score = score * .90
+    # Check if scheduled in Katz or Bloch   for 101 and 191  
+    if schedule[0].location == 'Katz209' and schedule[4].location != 'Katz209':
+        score = score * .97
+    if schedule[0].location == 'Katz209' and schedule[5].location != 'Katz209':
+        score = score * .97
+    if schedule[1].location == 'Katz209' and schedule[4].location != 'Katz209':
+        score = score * .97
+    if schedule[1].location == 'Katz209' and schedule[5].location != 'Katz209':
+        score = score * .97
+    if schedule[4].location == 'Katz209' and schedule[0].location != 'Katz209':
+        score = score * .97
+    if schedule[4].location == 'Katz209' and schedule[1].location != 'Katz209':
+        score = score * .97
+    if schedule[5].location == 'Katz209' and schedule[0].location != 'Katz209':
+        score = score * .97
+    if schedule[5].location == 'Katz209' and schedule[1].location != 'Katz209':
+        score = score * .97
+    if schedule[0].location == 'Bloch0009' and schedule[4].location != 'Bloch0009':
+        score = score * .97
+    if schedule[0].location == 'Bloch0009' and schedule[5].location != 'Bloch0009':
+        score = score * .97
+    if schedule[1].location == 'Bloch0009' and schedule[4].location != 'Bloch0009':
+        score = score * .97
+    if schedule[1].location == 'Bloch0009' and schedule[5].location != 'Bloch0009':
+        score = score * .97
+    if schedule[4].location == 'Bloch0009' and schedule[0].location != 'Bloch0009':
+        score = score * .97
+    if schedule[4].location == 'Bloch0009' and schedule[1].location != 'Bloch0009':
+        score = score * .97
+    if schedule[5].location == 'Bloch0009' and schedule[0].location != 'Bloch0009':
+        score = score * .97
+    if schedule[5].location == 'Bloch0009' and schedule[1].location != 'Bloch0009':
+        score = score * .97
+    # Check if scheduled in Katz or Bloch   for 201 and 291
+    if schedule[2].location == 'Katz209' and schedule[6].location != 'Katz209':
+        score = score * .97
+    if schedule[2].location == 'Katz209' and schedule[7].location != 'Katz209':
+        score = score * .97
+    if schedule[3].location == 'Katz209' and schedule[6].location != 'Katz209':
+        score = score * .97
+    if schedule[3].location == 'Katz209' and schedule[7].location != 'Katz209':
+        score = score * .97
+    if schedule[6].location == 'Katz209' and schedule[2].location != 'Katz209':
+        score = score * .97
+    if schedule[6].location == 'Katz209' and schedule[3].location != 'Katz209':
+        score = score * .97
+    if schedule[7].location == 'Katz209' and schedule[2].location != 'Katz209':
+        score = score * .97
+    if schedule[7].location == 'Katz209' and schedule[3].location != 'Katz209':
+        score = score * .97
+    if schedule[2].location == 'Bloch0009' and schedule[6].location != 'Bloch0009':
+        score = score * .97
+    if schedule[2].location == 'Bloch0009' and schedule[7].location != 'Bloch0009':
+        score = score * .97
+    if schedule[3].location == 'Bloch0009' and schedule[6].location != 'Bloch0009':
+        score = score * .97
+    if schedule[3].location == 'Bloch0009' and schedule[7].location != 'Bloch0009':
+        score = score * .97
+    if schedule[6].location == 'Bloch0009' and schedule[2].location != 'Bloch0009':
+        score = score * .97
+    if schedule[6].location == 'Bloch0009' and schedule[2].location != 'Bloch0009':
+        score = score * .97
+    if schedule[7].location == 'Bloch0009' and schedule[3].location != 'Bloch0009':
+        score = score * .97
+    if schedule[7].location == 'Bloch0009' and schedule[3].location != 'Bloch0009':
+        score = score * .97
+    # Times array '10A', '11A', '12P', '1P', '2P', '3P', '4P'
+    for i in range(len(data.times)):
+        if i-1 == -1:
+            if schedule[0].time == data.times[i] and schedule[4].time == data.times[i+1]:
+                score = score * 1.05
+        if i+1 == 7:
+            if schedule[0].time == data.times[i] and schedule[4].time == data.times[i-1]:
+                score = score * 1.05
+        else:
+            if schedule[0].time == data.times[i] and (schedule[4].time == data.times[i-1] or schedule[4].time == data.times[i+1]):
+                score = score * 1.05
+
+
     return score
 
 
