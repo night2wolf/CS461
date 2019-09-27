@@ -24,7 +24,7 @@ def create_schedule():
     random_schedule = []
     for i in range(len(data.classes)):
         location = random.choice(data.locations)
-        class_schedule = data.Schedule(data.classes[i],data.class_size[i],random.choice(data.times),random.choice(data.instructors),location,determine_location_size(location), [])
+        class_schedule = data.Schedule(data.classes[i],data.class_size[i],random.choice(data.times),random.choice(data.instructors),location,determine_location_size(location))
         random_schedule.append(class_schedule)
 
     return random_schedule
@@ -91,20 +91,16 @@ def fitness_evaluate(schedule):
            
     # For each schedule that has the same instructor teaching more than 4 courses: -5 per course over 4
     if Hare_counter > 4:
-        score = score - (5*(Hare_counter-4))
-        schedule[11].violations.append("Hare teaching too many courses")
+        score = score - (5*(Hare_counter-4))        
     if Bingham_counter > 4:
-        score = score - (5*(Bingham_counter-4))
-        schedule[11].violations.append("Bingham teaching too many courses")
+        score = score - (5*(Bingham_counter-4))        
     if Kuhail_counter > 4:
-        score = score - (5*(Kuhail_counter-4))
-        schedule[11].violations.append("Kuhail teaching too many courses")
+        score = score - (5*(Kuhail_counter-4))        
     if Mitchell_counter > 4:
-        score = score - (5*(Mitchell_counter-4))
-        schedule[11].violations.append("Mitchell teaching too many courses")
+        score = score - (5*(Mitchell_counter-4))        
     if Rao_counter > 4:
         score = score - (5*(Rao_counter-4))
-        schedule[11].violations.append("Rao teaching too many courses")
+        
     
     # For each schedule that has Rao or Mitchell(graduate faculty) teaching more courses than Hare or Bingham: -5 % to total fitness score. (Same number of courses is OK.)
     Mitchell_Rao_courses = Mitchell_counter + Rao_counter
@@ -445,5 +441,113 @@ def fitness_evaluate(schedule):
                     score = score + 5
 
     return score
+# Determine the Contraint Violations:
+# More than 1 class in the same room at the same time - done
+# Instructor not qualified to teach the course 
+# Room too small for expected number of students - done
+# 1 instructor has more than 4 courses - done
+def eval_violations(schedule):
+    violations = []
+    Hare_counter = 0
+    Bingham_counter = 0
+    Kuhail_counter = 0
+    Mitchell_counter = 0
+    Rao_counter = 0
+    for i in range(len(schedule)):
+        hare_class_count = 0
+        if schedule[i].instructor == "Hare":
+            for j in range(len(data.Hare_classes)):
+                if schedule[i].clas == data.Hare_classes[j]:
+                    break
+                elif hare_class_count == 8:
+                    violations.append("Hare not qualified to teach: " + str(schedule[i].clas))
+                else:
+                    hare_class_count = hare_class_count +1
+        bingham_class_count = 0
+        if schedule[i].instructor == "Bingham":
+            for j in range(len(data.Bingham_classes)):
+                if schedule[i].clas == data.Bingham_classes[j]:
+                    break
+                elif bingham_class_count == 8:
+                    violations.append(
+                        "Bingham not qualified to teach: " + str(schedule[i].clas))
+                else:
+                    bingham_class_count = bingham_class_count + 1
+        kuhail_class_count = 0
+        if schedule[i].instructor == "Kuhail":
+            for j in range(len(data.Kuhail_classes)):
+                if schedule[i].clas == data.Kuhail_classes[j]:
+                    break
+                elif kuhail_class_count == 1:
+                    violations.append(
+                        "Kuhail not qualified to teach: " + str(schedule[i].clas))
+                else:
+                    kuhail_class_count = kuhail_class_count + 1
+        mitchell_class_count = 0
+        if schedule[i].instructor == "Mitchell":
+            for j in range(len(data.Mitchell_classes)):
+                if schedule[i].clas == data.Mitchell_classes[j]:
+                    break
+                elif mitchell_class_count == 5:
+                    violations.append(
+                        "Mitchell not qualified to teach: " + str(schedule[i].clas))
+                else:
+                    mitchell_class_count = mitchell_class_count + 1
+        rao_class_count = 0
+        if schedule[i].instructor == "Rao":
+            for j in range(len(data.Rao_classes)):
+                if schedule[i].clas == data.Rao_classes[j]:
+                    break
+                elif rao_class_count == 4:
+                    violations.append(
+                        "Rao not qualified to teach: " + str(schedule[i].clas))
+                else:
+                    rao_class_count = rao_class_count + 1
 
-
+        if schedule[i].location_size <= schedule[i].class_size:
+            violations.append(str(schedule[i].location) + " is too small for " + str(schedule[i].clas))
+        counter = 0
+        for j in range(len(schedule)):
+            if schedule[i].time == schedule[j].time and schedule[i].location == schedule[j].location:
+                # count each instance of a conflict
+                counter = counter + 1                
+        # If the counter is only 1 that means it is by itself and we give a reward
+        if counter > 1:
+            violations.append("2 Classes scheduled in " + str(schedule[i].location) + " at the same time")
+        
+        if schedule[i].instructor == "Hare" :
+            Hare_counter = Hare_counter + 1
+        if schedule[i].instructor == "Bingham" :
+            Bingham_counter = Bingham_counter + 1
+        if schedule[i].instructor == "Kuhail":
+            Kuhail_counter = Kuhail_counter + 1
+        if schedule[i].instructor == "Mitchell" :
+            Mitchell_counter = Mitchell_counter + 1
+        if schedule[i].instructor == "Rao":
+            Rao_counter = Rao_counter + 1 
+    if Hare_counter > 4:
+        violations.append("Hare has too many classes")        
+    if Bingham_counter > 4:
+        violations.append("Bingham has too many classes")        
+    if Kuhail_counter > 4:
+        violations.append("Kuhail has too many classes")        
+    if Mitchell_counter > 4:
+        violations.append("Mitchell has too many classes")        
+    if Rao_counter > 4:
+        violations.append("Rao has too many classes")
+      
+    return violations
+"""
+        for k in range(len(data.Bingham_classes)):
+            if schedule[i].clas != data.Bingham_classes[k] and schedule[k].instructor == "Bingham":
+                violations.append("Bingham not qualified to teach: " + str(schedule[i].clas))
+        for l in range(len(data.Kuhail_classes)):
+            if schedule[i].clas != data.Kuhail_classes[l] and schedule[l].instructor == "Kuhail":
+                violations.append("Kuhail not qualified to teach: " + str(schedule[i].clas))
+        for m in range(len(data.Mitchell_classes)):
+            if schedule[i].clas != data.Mitchell_classes[m] and schedule[m].instructor == "Mitchell":
+                violations.append("Mitchell not qualified to teach: " + str(schedule[i].clas))
+        for n in range(len(data.Rao_classes)):
+            if schedule[i].clas != data.Rao_classes[n] and schedule[n].instructor == "Rao":
+                violations.append("Rao not qualified to teach: " + str(schedule[i].clas))
+""" 

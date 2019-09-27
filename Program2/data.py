@@ -22,11 +22,10 @@ Rao_classes = ['CS291A', 'CS291B', 'CS303', 'CS341', 'CS461']
 
 
 class Schedule():
-    def __init__(self, clas,class_size, time, instructor, location,location_size,violations):
+    def __init__(self, clas,class_size, time, instructor, location,location_size):
         self.clas = clas
         self.class_size = class_size
         self.time = time
         self.instructor = instructor
         self.location = location
         self.location_size = location_size
-        self.violations = violations
