@@ -101,7 +101,6 @@ def fitness_evaluate(schedule):
     if Rao_counter > 4:
         score = score - (5*(Rao_counter-4))
         
-    
     # For each schedule that has Rao or Mitchell(graduate faculty) teaching more courses than Hare or Bingham: -5 % to total fitness score. (Same number of courses is OK.)
     Mitchell_Rao_courses = Mitchell_counter + Rao_counter
     Hare_Bingham_courses = Hare_counter + Bingham_counter    
@@ -442,10 +441,10 @@ def fitness_evaluate(schedule):
 
     return score
 # Determine the Contraint Violations:
-# More than 1 class in the same room at the same time - done
+# More than 1 class in the same room at the same time
 # Instructor not qualified to teach the course 
-# Room too small for expected number of students - done
-# 1 instructor has more than 4 courses - done
+# Room too small for expected number of students
+# 1 instructor has more than 4 courses
 def eval_violations(schedule):
     violations = []
     Hare_counter = 0
@@ -511,7 +510,7 @@ def eval_violations(schedule):
             if schedule[i].time == schedule[j].time and schedule[i].location == schedule[j].location:
                 # count each instance of a conflict
                 counter = counter + 1                
-        # If the counter is only 1 that means it is by itself and we give a reward
+        # If the counter is greater then 1 that means there is a conflict
         if counter > 1:
             violations.append("2 Classes scheduled in " + str(schedule[i].location) + " at the same time")
         
@@ -534,20 +533,6 @@ def eval_violations(schedule):
     if Mitchell_counter > 4:
         violations.append("Mitchell has too many classes")        
     if Rao_counter > 4:
-        violations.append("Rao has too many classes")
-      
+        violations.append("Rao has too many classes")      
     return violations
-"""
-        for k in range(len(data.Bingham_classes)):
-            if schedule[i].clas != data.Bingham_classes[k] and schedule[k].instructor == "Bingham":
-                violations.append("Bingham not qualified to teach: " + str(schedule[i].clas))
-        for l in range(len(data.Kuhail_classes)):
-            if schedule[i].clas != data.Kuhail_classes[l] and schedule[l].instructor == "Kuhail":
-                violations.append("Kuhail not qualified to teach: " + str(schedule[i].clas))
-        for m in range(len(data.Mitchell_classes)):
-            if schedule[i].clas != data.Mitchell_classes[m] and schedule[m].instructor == "Mitchell":
-                violations.append("Mitchell not qualified to teach: " + str(schedule[i].clas))
-        for n in range(len(data.Rao_classes)):
-            if schedule[i].clas != data.Rao_classes[n] and schedule[n].instructor == "Rao":
-                violations.append("Rao not qualified to teach: " + str(schedule[i].clas))
-""" 
+
