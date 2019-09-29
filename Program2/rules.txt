@@ -1,0 +1,148 @@
+Program 2
+
+Fall 2019
+
+For this program you will use a genetic algorithm to solve a small example of a real-world problem.
+Consider the problem of producing a university class schedule. Each course must be taught.
+It must have a room, and a time. Only one course can be taught in a room at a time.
+The room must be able to hold the expected number of students. It must have an instructor.
+Each instructor can teach any of several courses, but only those courses, 
+and there is an upper limit on how many courses one instructor can teach.
+Finally, we may have additional preferences regarding scheduling; for example,
+if there are courses that are usually taken the same semester,
+we would prefer (but not require) that they be taught in adjacent time slots,
+and if they’re in adjacent time slots, that they be in rooms that are close together.
+You are given a list of 12 courses. (Some of these may be multiple sections of the same course,
+but that doesn’t affect our problem here.) You also have a list of several faculty members,
+and the courses each can teach. You also have a list of available rooms and time slots.
+Your task is to use a genetic algorithm to devise a suitable teaching schedule.
+In a production system, we’d probably want the program to read the various options:
+(courses, instructors, etc) from input files,
+but for this assignment you can use input files or put the data directly into your source code.
+
+Courses and expected enrollments are:
+CS 101A (40), CS 101B (25), CS 201A (30), CS 201B (30), CS 191A (60),
+CS 191B (20), CS 291B (40), CS 291A (20), CS 303 (50), CS 341 (40), CS 449 (55), CS 461 (40).
+
+Instructors and what they can teach:
+Hare: CS 101, CS 201, CS 291, CS 303, CS 449, CS 461
+Bingham: CS 101, CS 201, CS 191, CS 291, CS 449
+Kuhail: CS 303, CS 341
+Mitchell: CS 191, CS 291, CS 303, CS 341
+Rao: CS 291, CS 303, CS 341, CS 461
+
+Time slots:
+10A, 11A, 12P, 1P, 2P, 3P, 4P
+(We’re assuming these are all MWF courses)
+
+Rooms and capacities:
+Haag 301 (70), Haag 206 (30), Royall 204 (70), Katz 209 (50),
+Flarsheim 310 (80), Flarsheim 260 (25), Bloch 0009 (30)
+
+Fitness function:
+Assign instructors, times, rooms, and courses. For your initial population, this will be random.
+
+Assess the fitness function as follows:
+For each course that is taught by an instructor who can teach it: +3
+For each course that is the only course scheduled in that room at that time: +5
+For each course that is in a room large enough to accommodate it: +5
+Room capacity is no more than twice the expected enrollment: +2
+For each course that does not have the same instructor teaching another course at the same time: +5
+For each schedule that has the same instructor teaching more than 4 courses: -5 per course over 4
+For each schedule that has Rao or Mitchell (graduate faculty)
+teaching more courses than Hare or Bingham: -5% to total fitness score. (Same number of courses is OK.)
+
+CS 101 and CS 191 are usually taken the same semester; the same applies to CS 201 and CS 291.
+Therefore apply these rules to those pairs of courses:
+Courses are scheduled for same time: -10% to score
+Courses are scheduled for adjacent times: +5% to score
+if these courses are scheduled for adjacent times, and are in the same building: +5 points
+
+Are both on the quad (Haag, Royall, Flarsheim):
+no modification
+1 is in Katz and the other isn’t: -3%
+1 is in Bloch and the other isn’t: -3%
+(Yes, if one’s in Katz and the other’s in Bloch, that’s -6%)
+
+Selection for breeding:
+Use L2 normalization. If any schedule has a net score less than 0, treat it as 0.
+
+Crossover/mutation:
+It'll probably be simplest to assign each course its own column in a table
+which will not change, and then select sections of table (i.e. columns) for the crossover section.
+Select a random (uniform) division point to make the split,
+with at least 1 column from each table surviving to the next generation.
+For mutation, give each table entry a small probability--0.01 or so,
+no more than 0.05--of being replaced with a randomly-selected element from that population
+(rooms, instructors, etc).
+
+Report the average fitness and best fitness of each generation, 
+until the best fitness in the population increases by less than 0.2% for 3 consecutive generations.
+Report the best schedule you find. Your program should report any constraints that are violated
+
+More than 1 class in the same room at the same time
+Instructor not qualified to teach the course
+Room too small for expected number of students
+1 instructor has more than 4 courses
+
+The room preferences for CS 101/191 and CS 201/291 are just that—preferences--
+so it’s OK if they’re violated. (Better if they’re not, but the fitness function will take care of that.)
+
+Extra credit:
+For 5 points (half a letter grade) extra credit,
+implement any 2 additional features for the fitness function.
+Perhaps some instructors have a room or building preference, or morning/afternoon,
+or prefer a break between classes, or are OK with 2 classes back-to-back but not 3 or more,
+or have health issues that make walking over to Katz or Bloch significantly difficult,
+or different sections of the same course not taught too close together in time, or...whatever.
+
+You may write your program in C, C++, C#, Java, or Python.
+(If you’ve got something else you want to use, talk to me, we’ll discuss it.)
+Submit your program source code, and a sample program run with the schedule it produces.
+Also write up a short report discussing your program, what data structures you used,
+ what additional rules you added (if you went for the extra credit),
+ or ideas for how this program could be extended or generalized.
+
+Due Sunday night, September 29 (Upload link vanishes 8 AM Monday, Sep 30).
+
+ 
+
+Appendix: example of L2 normalization
+Suppose we have 5 possible schedules with the following scores:
+S1: 55
+S2: 20
+S3: 17
+S4: 42
+S5: -2 (which will become 0)
+
+Find the square of each:
+S1: 3025
+S2: 400
+S3: 289
+S4: 1764
+S5: 0
+
+Now divide by the sum of squares (rounded here to 3 decimal places):
+SS = 5478
+S1 = 3025 / 5478 = 0.552
+S2 = 400 / 5478 = 0.073
+S3 = 289 / 5478 = 0.053
+S4 = 1764 / 5478 = 0.322
+S5 = 0 / 5478 = 0
+
+Now find the cumulative distribution:
+S1: 0.552
+S2: 0.552 + 0.073 = 0.625
+S3: 0.625 + 0.053 = 0.678
+S4: 0.678 + 0.322 = 1.000
+
+Note that S5 has dropped out (probability 0).
+Generate a uniform random number in [0, 1] to select an item based on what range it falls into.
+
+j = random()
+idx = 0
+while table[idx] < j:
+       idx++
+
+Of course, your population will be much larger, at least 200 or so,
+so the range will be smaller for each item.
