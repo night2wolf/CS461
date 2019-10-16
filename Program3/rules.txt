@@ -10,26 +10,26 @@ a different pet, and a favorite sports team.
 
 
 The Raiders fan owns a dog. √
-The cat owner is English. 
-The milk drinker is Canadian. 
-The horse owner is Vietnamese. 
-The Ravens fan owns a hamster. 
-The South African drinks tea. 
-The Canadian lives in the green house. 
-The Chargers fan lives in the blue house. 
-The Broncos fan lives in the yellow house. 
-The juice drinker lives in the yellow house.
-The red house is the home of the Ravens fan.
-The coffee drinker owns a cat. 
-The resident of the white house is South African. 
-The blue house is on the near (left) end. 
-The red house is adjacent to the far end. 
-The milk drinker lives at the far end of the street. 
-The resident of the red house has a Vietnamese neighbor.
-The juice drinker lives next to the dog owner.
-The dog owner lives next to the blue house.
+The cat owner is English. √
+The milk drinker is Canadian. √
+The horse owner is Vietnamese. √ 
+The Ravens fan owns a hamster. √
+The South African drinks tea. √
+The Canadian lives in the green house. √
+The Chargers fan lives in the blue house. √
+The Broncos fan lives in the yellow house. √
+The juice drinker lives in the yellow house.√
+The red house is the home of the Ravens fan. √
+The coffee drinker owns a cat. √
+The resident of the white house is South African. √ 
+The blue house is on the near (left) end. √
+The red house is adjacent to the far end. √
+The milk drinker lives at the far end of the street. √
+The resident of the red house has a Vietnamese neighbor. √
+The juice drinker lives next to the dog owner. √
+The dog owner lives next to the blue house. √
 The cat owner and the juice drinker are NOT neighbors.
-The neighbor of the Raiders fan keeps a horse.
+The neighbor of the Raiders fan keeps a horse.  √
 
 
  
