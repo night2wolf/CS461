@@ -1,10 +1,15 @@
 % reference material:
 % https://baptiste-wicht.com/posts/2010/09/solve-einsteins-riddle-using-prolog.html
+% https://stackoverflow.com/questions/9252656/einsteins-riddle-prolog 
 houses(0, []) :- !.
 houses(N, [(color,nationality,pet,beverage,team)|T]) :- N1 is N-1, houses(N1,T).
 house(1, [H|_], H) :- !.
 house(N, [_|T], R) :- N1 is N-1, house(N1, T, R).
-
+color([blue,green,red,white,yellow]).
+nationality([canadian,colombian,english,southafrican,vietnamese]).
+pet([dog,cat,hamster,horse,lizard]).
+beverage([coffee,juice,milk,tea,water]).
+team([broncos,chargers,chiefs,raiders,ravens]).
 % (color,nationality,pet,beverage,team)
 % The Raiders fan owns a dog.
 clue1([(_,_,dog,_,raiders)|_]).
@@ -105,8 +110,4 @@ clue20(Houses),
 clue21(Houses),
 problem1(Houses).
 
-color([blue,green,red,white,yellow]).
-nationality([canadian,colombian,english,southafrican,vietnamese]).
-pet([dog,cat,hamster,horse,lizard]).
-beverage([coffee,juice,milk,tea,water]).
-team([broncos,chargers,chiefs,raiders,ravens]).
+
