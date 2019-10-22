@@ -1,0 +1,6 @@
+% c:/Users/tklinkenberg/Documents/CS461/CS461/Program3/db2.pl compiled 0.00 sec, 4 clauses
+?- solve(Nationality,Pet).
+Nationality = colombian,
+Pet = lizard .
+
+?- 

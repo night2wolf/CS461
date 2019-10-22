@@ -55,10 +55,3 @@ member(house(_,_,_,water,_), Houses),
 member(house(Nationality,red,_,_,_), Houses),
 % what pet does the Chiefs fan have?
 member(house(_,_,Pet,_,chiefs), Houses).
-
-write_item(details(Nationality,Color,Pet,Beverage,Team)) :-
-    write('Nationality : '), write(Nationality), nl,
-    write('Color : '), write(Color), nl,
-    write('Pet: '), write(Pet), nl,
-    write('Beverage: '), write(Beverage), nl,
-    write('Team: '),write(Team), nl, nl.
