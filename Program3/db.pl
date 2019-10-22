@@ -2,7 +2,7 @@
 % https://baptiste-wicht.com/posts/2010/09/solve-einsteins-riddle-using-prolog.html
 % https://stackoverflow.com/questions/9252656/einsteins-riddle-prolog 
 houses(0, []) :- !.
-houses(N, [(color,nationality,pet,beverage,team)|T]) :- N1 is N-1, houses(N1,T).
+houses(N, [(Color,Nationality,Pet,Beverage,Team)|T]) :- N1 is N-1, houses(N1,T).
 house(1, [H|_], H) :- !.
 house(N, [_|T], R) :- N1 is N-1, house(N1, T, R).
 color([blue,green,red,white,yellow]).
@@ -51,11 +51,11 @@ clue12([_|T]) :- clue12(T).
 clue13([(white,southafrican,_,_,_)|_]).
 clue13([_|T]) :- clue13(T).
 % The blue house is on the near (left) end. 
-clue14(Houses) :- house(0, Houses, (blue,_,_,_,_)).
+clue14(Houses) :- house(1, Houses, (blue,_,_,_,_)).
 % The red house is adjacent to the far end. 
-clue15(Houses) :- house(3, Houses,(red,_,_,_,_)).
+clue15(Houses) :- house(4, Houses,(red,_,_,_,_)).
 % The milk drinker lives at the far end of the street. 
-clue16(Houses) :- house(4,Houses,(_,_,_,milk,_)).
+clue16(Houses) :- house(5,Houses,(_,_,_,milk,_)).
 % The resident of the red house has a Vietnamese neighbor.
 clue17([(red,_,_,_,_),(_,vietnamese,_,_,_)|_]).
 clue17([(_,vietnamese,_,_,_),(red,_,_,_,_)|_]).
@@ -73,10 +73,18 @@ clue20([(_,_,_,_,raiders),(_,_,horse,_,_)|_]).
 clue20([(_,_,horse,_,_),(_,_,_,_,raiders)|_]).
 clue20([_|T]) :- clue20(T).
 % The cat owner and the juice drinker are NOT neighbors.
-clue21([(_,_,_,juice,_), (_,_,cat,_,_)|_]).
-clue21([(_,_,cat,_,_), (_,_,_,juice,_)|_]).
-clue21([_|T]) :- \+ clue21(T).
-
+%clue21([(_,_,_,juice,_), (_,_,cat,_,_)|_]).
+%clue21([(_,_,cat,_,_), (_,_,_,juice,_)|_]).
+%clue21([_|T]) :- \+ clue21(T).
+% a lizard exists
+clue22([(_,_,lizard,_,_)|_]).
+clue22([_|T]) :- clue22(T).
+% a colombian exists
+clue23([(_,colombian,_,_,_)|_]).
+clue23([_|T]) :- clue23(T).
+% a water drinker exists
+clue24([(_,_,_,water,_)|_]).
+clue24([_|T]) :- clue24(T).
 % What nationality is the owner of the red house?
 problem1([(red,_,_,_,_)|_]).
 problem1([_|T]) :- problem1(T).
@@ -107,7 +115,11 @@ clue17(Houses),
 clue18(Houses),
 clue19(Houses),
 clue20(Houses),
-clue21(Houses),
-problem1(Houses).
+% clue21(Houses),
+clue22(Houses),
+clue23(Houses),
+clue24(Houses),
+problem1(Houses),
+problem2(Houses).
 
 
